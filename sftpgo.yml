@@ -1,0 +1,79 @@
+---
+- name: Install and Configure SFTPGo Server
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Install required dependencies
+      package:
+        name:
+          - wget
+          - unzip
+        state: present
+
+    - name: Download SFTPGo latest release
+      get_url:
+        url: https://github.com/drakkan/sftpgo/releases/latest/download/sftpgo_linux_amd64.tar.gz
+        dest: /tmp/sftpgo.tar.gz
+        mode: '0644'
+
+    - name: Create SFTPGo directory
+      file:
+        path: /opt/sftpgo
+        state: directory
+        mode: '0755'
+
+    - name: Extract SFTPGo archive
+      unarchive:
+        src: /tmp/sftpgo.tar.gz
+        dest: /opt/sftpgo
+        remote_src: yes
+
+    - name: Create SFTPGo system user
+      user:
+        name: sftpgo
+        system: yes
+        shell: /bin/false
+        home: /var/lib/sftpgo
+
+    - name: Create required directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: sftpgo
+        group: sftpgo
+        mode: '0755'
+      loop:
+        - /etc/sftpgo
+        - /var/lib/sftpgo
+        - /var/log/sftpgo
+
+    - name: Copy SFTPGo service file
+      copy:
+        content: |
+          [Unit]
+          Description=SFTPGo Server
+          After=network.target
+
+          [Service]
+          ExecStart=/opt/sftpgo/sftpgo serve
+          User=sftpgo
+          Group=sftpgo
+          Restart=always
+          RestartSec=3
+
+          [Install]
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/sftpgo.service
+        mode: '0644'
+
+    - name: Start and enable SFTPGo service
+      systemd:
+        name: sftpgo
+        state: started
+        enabled: yes
+        daemon_reload: yes
