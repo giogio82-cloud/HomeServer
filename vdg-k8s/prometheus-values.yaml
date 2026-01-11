@@ -1,0 +1,25 @@
+# prometheus-values.yaml
+
+# Prometheus Konfiguration
+prometheus:
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - prometheus.localhost
+    paths:
+      - /
+    pathType: Prefix
+
+# Grafana Konfiguration
+grafana:
+  # Setzt ein einfaches Admin-Passwort für die lokale Entwicklung
+  adminPassword: "password"
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - grafana.localhost
+    paths:
+      - /
+    pathType: Prefix

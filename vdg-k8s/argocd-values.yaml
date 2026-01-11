@@ -1,0 +1,20 @@
+configs:
+  params:
+    server.insecure: "true"
+  repositories:
+    gitea-repo:
+      # Port 3000 und der Pfad zum Repo sind zwingend erforderlich!
+      url: gitea-http.gitea.svc.cluster.local
+      username: "admin"
+      password: "password"
+
+ingress:
+  enabled: true
+  ingressClassName: "traefik"
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+  hosts:
+    - argocd.localhost
+  paths:
+    - /
+  pathType: Prefix

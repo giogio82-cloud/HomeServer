@@ -1,0 +1,26 @@
+# teamcity-values.yaml
+
+# Konfiguration für den TeamCity Server (angepasst für den Community-Chart)
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  hosts:
+    - host: teamcity.localhost
+      paths:
+        - path: /
+          pathType: Prefix
+
+# Persistente Speicherung für Server-Daten und Konfiguration
+# Wir lassen storageClass leer, damit der k3d-Standard (local-path) verwendet wird.
+persistence:
+  enabled: true
+  size: 2Gi
+
+# Konfiguration für den TeamCity Agent
+teamcity-agent:
+  enabled: true
+  # Der serverUrl muss auf den Service-Namen des Servers verweisen.
+  # Im Community-Chart lautet dieser standardmäßig 'teamcity-server-service'.
+  # Der Service-Name setzt sich aus <release-name>-<chart-name> zusammen. Wir verwenden 'teamcity-server' als Release-Namen.
+  serverUrl: "http://teamcity-server-teamcity-server:8111"
+  replicas: 1
