@@ -1,0 +1,20 @@
+ingress:
+  enabled: true
+  hosts:
+    - host: gitea.localhost
+      paths:
+        - path: /
+          pathType: Prefix
+gitea:
+  admin:
+    username: "admin"
+    password: "password"
+  config:
+    server:
+      ROOT_URL: http://gitea.localhost/
+    service:
+      DISABLE_REGISTRATION: false
+      ENABLE_NOTIFY_MAIL: false
+persistence:
+  enabled: true
+  size: 1Gi
