@@ -1,0 +1,15 @@
+# traefik-dashboard-ingress.yaml
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-dashboard
+  namespace: kube-system # Traefik läuft in diesem Namespace
+spec:
+  entryPoints:
+    - web # Der HTTP-Entrypoint (Port 80)
+  routes:
+    - match: Host(`traefik.home.lan`)
+      kind: Rule
+      services:
+        - name: api@internal # Spezieller interner Service für das Dashboard
+          kind: TraefikService

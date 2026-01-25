@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  sftpgo:
+    image: drakkan/sftpgo:latest
+    container_name: sftpgo
+    restart: unless-stopped
+    ports:
+      - "2022:2022"    # SFTP
+      - "8080:8080"    # Admin UI
+    volumes:
+      - ./config:/etc/sftpgo
+      - ./data:/var/lib/sftpgo
+      - ./logs:/var/log/sftpgo
+      - /mnt/disk1:/mnt/disk1:rw
+      - /mnt/disk2:/mnt/disk2:rw
+      - /mnt/disk3:/mnt/disk3:rw
+    environment:
+      - SFTPGO_LOG_LEVEL=info
+    # If you already have a config file, SFTPGo will read /etc/sftpgo/sftpgo.json
+    # and keep its DB under /var/lib/sftpgo
